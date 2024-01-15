@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GetCurrentValues</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.min.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}" type="text/javascript"></script>
+    <link rel="stylesheet" href="/style.css">
+
+    <script th:inline="javascript">
+        const currentValuesEndpoint = [[${T(com.data354.aq54.config.AQ54Root).V3STATIONHOURLYAVG}]];
+        var jsonstring = [[${flux}]];
+    </script>
+
+</head>
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Formulaire de Recherche</h1>
+
+        <form id="exampleForm" >
+            <div class="form-group">
+                <label for="station_id">id de la station</label>
+                <input type="text" class="form-control" id="station_id" required>
+            </div>
+
+            <button id="idsubmit" type="submit" onclick="callMethod()" class="btn btn-primary">Obtenir</button>
+        </form>
+
+        <canvas id="myChart" width="400" height="200"></canvas>
+
+    </div>
+
+    <script>
+        function callMethod() {
+            var stationid = $("#station_id").val();
+
+            // Mettre à jour l'URL du formulaire
+            $("#exampleForm").attr("action", currentValuesEndpoint + encodeURIComponent(stationid));
+
+            // Soumettre le formulaire
+            $("#exampleForm").submit();
+        }
+
+
+        function createChart(jsonData) {
+
+            var labels = jsonData.data.map(function (entry) {
+                return entry.timestamp;
+            });
+
+            var coData = jsonData.data.map(function (entry) {
+                return entry.CO;
+            });
+
+            var tData = jsonData.data.map(function (entry) {
+                return entry.T;
+            });
+
+            var tintData = jsonData.data.map(function (entry) {
+                return entry["T. int."];
+            });
+
+            var no2Data = jsonData.data.map(function (entry) {
+                return entry.NO2;
+            });
+
+            var o3Data = jsonData.data.map(function (entry) {
+                return entry.O3;
+            });
+
+            var pm10Data = jsonData.data.map(function (entry) {
+                return entry.PM10;
+            });
+
+            var pm25Data = jsonData.data.map(function (entry) {
+                return entry["PM2.5"];
+            });
+
+            var rhData = jsonData.data.map(function (entry) {
+                return entry.RH;
+            });
+
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'CO',
+                        data: coData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderWidth: 1,
+                        fill: false
+                    }, {
+                        label: 'T',
+                        data: tData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderWidth: 1,
+                        fill: false
+                    }, {
+                        label: 'T. int.',
+                        data: tintData,
+                        backgroundColor: 'rgba(255, 206, 86, 0.7)',
+                        borderWidth: 1,
+                        fill: false
+                    }, {
+                        label: 'NO2',
+                        data: no2Data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                        borderWidth: 1,
+                        fill: false
+                    }, {
+                        label: 'O3',
+                        data: o3Data,
+                        backgroundColor: 'rgba(153, 102, 255, 0.7)',
+                        borderWidth: 1,
+                        fill: false
+                    }, {
+                        label: 'PM10',
+                        data: pm10Data,
+                        backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                        borderWidth: 1,
+                        fill: false
+                    }, {
+                        label: 'PM2.5',
+                        data: pm25Data,
+                        backgroundColor: 'rgba(255, 0, 0, 0.7)',
+                        borderWidth: 1,
+                        fill: false
+                    }, {
+                        label: 'RH',
+                        data: rhData,
+                        backgroundColor: 'rgba(0, 255, 0, 0.7)',
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            stacked: true
+                        },
+                        y: {
+                            stacked: true
+                        }
+                    }
+                }
+            });
+        }
+
+        var json = JSON.parse(jsonstring)
+        createChart(json);
+
+    </script>
+
+</body>
+
+</html>

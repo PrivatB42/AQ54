@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GetCurrentValues</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.min.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.js}" type="text/javascript"></script>
+    <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}" type="text/javascript"></script>
+    <link rel="stylesheet" href="/style.css">
+
+    <script th:inline="javascript">
+        const currentValuesEndpoint = [[${T(com.data354.aq54.config.AQ54Root).STATION}]];
+        var jsonstring = [[${flux}]];
+    </script>
+
+</head>
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Formulaire de Recherche</h1>
+
+        <form id="exampleForm" method="get">
+            <div class="form-group">
+                <label for="project_name">Nom du projet</label>
+                <input type="text" class="form-control" id="project_name" name="project_name" required>
+            </div>
+
+            <button id="idsubmit" type="submit" onclick="callMethod()" class="btn btn-primary">Obtenir</button>
+        </form>
+
+        <div>
+            <h2>Information de station</h2>
+
+            <!-- Itération sur la liste 'sessionInfoList' -->
+            <div th:each="sessionInfo : ${stationlist}">
+                <div>
+                    <h3 th:text="'Nom du projet : '+${sessionInfo.projectName}"></h3>
+                    <p th:text="'station ID: ' + ${sessionInfo.stationId}"></p>
+                    <p th:text="'Nom de la station: ' + ${sessionInfo.stationName}"></p>
+                    <p th:text="'Longitude: ' + ${sessionInfo.longitude}"></p>
+                    <p th:text="'Latitude : ' + ${sessionInfo.latitude}"></p>
+
+                </div>
+                <hr>
+            </div>
+        </div>
+
+
+        <canvas id="myChart" width="400" height="200"></canvas>
+
+    </div>
+
+    <script>
+        function callMethod() {
+            var projectName = $("#project_name").val();
+
+            // Mettre à jour l'URL du formulaire
+            $("#exampleForm").attr("action", currentValuesEndpoint + encodeURIComponent(projectName));
+
+            // Soumettre le formulaire
+            $("#exampleForm").submit();
+        }
+
+
+        function createChart(data) {
+
+            var stationName = data.map(function (station) {
+                return station.station_name;
+            });
+
+            var latitude = data.map(function (station) {
+                return station.latitude;
+            });
+
+            var longitude = data.map(function (station) {
+                return station.longitude;
+            });
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: stationName,
+                    datasets: [{
+                        label: 'latitude',
+                        data: latitude,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)'
+                        ]
+                    },{
+                        label: 'longitude',
+                        data: longitude,
+                        backgroundColor: [
+                            'rgba(99,255,172,0.7)',
+                            'rgba(188,27,208,0.7)'
+
+                        ]
+                    }]
+                }
+            });
+
+        }
+        var json = JSON.parse(jsonstring)
+        createChart(json);
+
+
+    </script>
+
+</body>
+
+</html>
