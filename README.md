@@ -1,3 +1,6 @@
+Cette application permet de visualiser les données des differents capteurs en temps réel 
+et en différé (en precisant un intervalle de temps)
+
 technologie utilisée : Ce porjet a été réalisé avec spring boot, JavaScript, html et css
 
 L'utilisation de cette application nécessite d'être connecté à un réseau internet
