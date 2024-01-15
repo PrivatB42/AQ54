@@ -26,13 +26,14 @@ public class AQ54Service {
 
     }
 
-    public Flux<String> getHourlyAvg(String station_name, String dt_from_string, String dt_to_string){
+    public Mono<String> getHourlyAvg(String station_name, String dt_from_string, String dt_to_string){
 
         return webClient.get()
                 .uri("/getHourlyAvg/{station_name}/{dt_from_string}/{dt_to_string}",
                         station_name, dt_from_string, dt_to_string)
+                .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToFlux(String.class);
+                .bodyToMono(String.class);
     }
 
     public Mono<String> getRange(String station_name, String dt_from_string, String dt_to_string){

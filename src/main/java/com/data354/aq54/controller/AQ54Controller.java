@@ -24,27 +24,10 @@ public class AQ54Controller implements AQ54Interface {
         this.service = service;
     }
 
-
     @Override
     public String getCurrentValues(String station_name, RedirectAttributes ra, Model model) {
 
         String flux = service.getCurrentValues(station_name).block();
-        /*assert flux != null;
-        flux.replaceAll(s -> s
-                .replace("{", "")
-                .replace("}", "")
-                .replace(",", "")
-                .replace(" ", ""));*/
-
-        /*String json = null;
-        try {
-            json = convertListToJson(flux);
-            json.replace("\\", "");
-            System.out.println(json);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }*/
-
         model.addAttribute("flux", flux);
         return "getcurrentvalues";
     }
@@ -52,9 +35,7 @@ public class AQ54Controller implements AQ54Interface {
     @Override
     public String getHourlyAvg(String station_name, String dt_from_string, String dt_to_string, Model model) {
 
-        List<String> flux = service.getHourlyAvg(station_name, dt_from_string,dt_to_string)
-                .collectList().block();
-
+        String flux = service.getHourlyAvg(station_name, dt_from_string,dt_to_string).block();
         model.addAttribute("flux", flux);
         return "getHourlyAvg";
     }
@@ -71,10 +52,8 @@ public class AQ54Controller implements AQ54Interface {
     public String getSessionInfo(String project_name, Model model) throws JsonProcessingException {
 
         String flux = service.getSessionInfo(project_name).block();
-
         ObjectMapper objectMapper = new ObjectMapper();
         List<SessionInfo> sessionInfoList = objectMapper.readValue(flux, new TypeReference<>() {});
-
         model.addAttribute("flux", flux);
         model.addAttribute("sessionInfoList", sessionInfoList);
         return "getSessionInfo";
@@ -92,11 +71,9 @@ public class AQ54Controller implements AQ54Interface {
     public String getStationStatus(String station_id, Model model) throws JsonProcessingException {
 
         String flux = service.getStationStatus(station_id).block();
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         Stationutc stationlist = objectMapper.readValue(flux, new TypeReference<>() {});
-
         model.addAttribute("flux", flux);
         model.addAttribute("stationlist", stationlist);
         return "getStationStatus";
@@ -106,10 +83,8 @@ public class AQ54Controller implements AQ54Interface {
     public String getStation(String project_name, Model model) throws JsonProcessingException {
 
         String flux = service.getStation(project_name).block();
-
         ObjectMapper objectMapper = new ObjectMapper();
         List<Station> stationlist = objectMapper.readValue(flux, new TypeReference<>() {});
-
         model.addAttribute("flux", flux);
         model.addAttribute("stationlist", stationlist);
         return "getStation";
