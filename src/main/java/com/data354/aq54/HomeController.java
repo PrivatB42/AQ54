@@ -8,6 +8,11 @@ import static com.data354.aq54.config.AQ54Root.*;
 @Controller
 public class HomeController {
 
+    @GetMapping("/")
+    public String BaseHome(){
+        return "redirect:" + APP_ROOT;
+    }
+
     @GetMapping(APP_ROOT)
     public String Home() {
         return "index";
